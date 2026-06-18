@@ -1,0 +1,79 @@
+{%- comment -%}
+  BluBirdy product card — real Shopify product.
+  Accepts:
+    product   {object}  required — a product object
+  Optional spec data is read from metafields (namespace `custom`):
+    custom.grade, custom.speed, custom.feather, custom.per_tube
+  Falls back gracefully (hides) when a metafield is empty.
+{%- endcomment -%}
+
+{%- liquid
+  assign variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+  assign grade = product.metafields.custom.grade
+  assign speed = product.metafields.custom.speed
+  assign feather = product.metafields.custom.feather
+  assign per_tube = product.metafields.custom.per_tube
+-%}
+
+<article class="pc" data-reveal data-cat="{{ product.type | escape }}">
+  <a class="pc-media" href="{{ product.url }}">
+    {%- if on_sale -%}
+      {%- assign saved = product.compare_at_price | minus: product.price -%}
+      <span class="pc-badge blue">Save {{ saved | money }}</span>
+    {%- elsif product.tags contains 'best-seller' -%}
+      <span class="pc-badge">Best seller</span>
+    {%- elsif product.tags contains 'limited' -%}
+      <span class="pc-badge dark">Limited</span>
+    {%- endif -%}
+
+    {%- if product.featured_media -%}
+      {{
+        product.featured_media
+        | image_url: width: 900
+        | image_tag: loading: 'lazy', sizes: '(min-width: 1080px) 25vw, 50vw', widths: '300, 450, 600, 900', alt: product.title
+      }}
+    {%- else -%}
+      {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder' }}
+    {%- endif -%}
+
+    {%- if speed != blank or feather != blank or per_tube != blank -%}
+      <div class="pc-spec">
+        <div class="pc-spec-row">
+          {%- if speed != blank -%}<div><span class="sv">{{ speed }}</span><span class="sl">Speed</span></div>{%- endif -%}
+          {%- if feather != blank -%}<div><span class="sv">{{ feather }}</span><span class="sl">Feather</span></div>{%- endif -%}
+          {%- if per_tube != blank -%}<div><span class="sv">{{ per_tube }}</span><span class="sl">Per tube</span></div>{%- endif -%}
+        </div>
+        {%- form 'product', product, class: 'pc-addform' -%}
+          <input type="hidden" name="id" value="{{ variant.id }}">
+          <button
+            type="submit"
+            name="add"
+            class="pc-add"
+            {% unless product.available %}disabled{% endunless %}
+          >
+            {%- if product.available -%}Quick add{%- else -%}Sold out{%- endif -%}
+          </button>
+        {%- endform -%}
+      </div>
+    {%- endif -%}
+  </a>
+
+  <div class="pc-info">
+    {%- if grade != blank or product.type != blank -%}
+      <div class="pc-tags">
+        {%- if grade != blank -%}<span class="grade">{{ grade }}</span>{%- endif -%}
+        {%- if product.type != blank -%}<span class="cat">{{ product.type }}</span>{%- endif -%}
+      </div>
+    {%- endif -%}
+    <a class="pc-name" href="{{ product.url }}">{{ product.title }}</a>
+    <div class="pc-price">
+      <span class="now">{{ product.price | money }}</span>
+      {%- if on_sale -%}<span class="was">{{ product.compare_at_price | money }}</span>{%- endif -%}
+      <span class="cur">{{ cart.currency.iso_code }}</span>
+    </div>
+  </div>
+</article>

@@ -1,0 +1,149 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+-%}
+
+<div
+  class="bb bb-bulk{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+  id="{{ section.settings.anchor_id | default: 'bulk' }}"
+>
+  <section class="bulk">
+    <div class="bb-wrap bulk-in">
+      <div class="bulk-copy" data-reveal>
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        <h2 class="display">{{ section.settings.heading }}</h2>
+        {%- if section.settings.lead != blank -%}
+          <p class="lead">{{ section.settings.lead }}</p>
+        {%- endif -%}
+        {%- if section.settings.note != blank -%}
+          <div class="bulk-note">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            <span>{{ section.settings.note }}</span>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <div class="bulk-form" data-reveal data-d="1">
+        {%- form 'contact', id: 'bb-bulk-form' -%}
+          {%- if form.posted_successfully? -%}
+            <div class="bulk-ok">
+              <div class="ic"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg></div>
+              <h3>Quote request received</h3>
+              <p>Thanks — our team will email a tailored bulk quote within one business day.</p>
+            </div>
+          {%- else -%}
+            <h3>{{ section.settings.form_title }}</h3>
+            <p class="fp">{{ section.settings.form_sub }}</p>
+            {%- if form.errors -%}
+              <p class="fp" style="color:#ff9a9a">{{ form.errors | default_errors }}</p>
+            {%- endif -%}
+            <div class="fgrid">
+              <div class="field">
+                <label for="bb-name">Your name</label>
+                <input id="bb-name" type="text" name="contact[name]" required placeholder="Alex Tan">
+              </div>
+              <div class="field">
+                <label for="bb-club">Club / org</label>
+                <input id="bb-club" type="text" name="contact[Club or org]" placeholder="Smash City BC">
+              </div>
+              <div class="field full">
+                <label for="bb-email">Email</label>
+                <input id="bb-email" type="email" name="contact[email]" required placeholder="you@email.com">
+              </div>
+              <div class="field full">
+                <label for="bb-qty">Estimated quantity</label>
+                <select id="bb-qty" name="contact[Estimated quantity]">
+                  <option>6+ tubes</option>
+                  <option selected>12+ tubes</option>
+                  <option>24+ tubes</option>
+                  <option>50+ tubes</option>
+                  <option>Recurring / contract</option>
+                </select>
+              </div>
+              <div class="field full">
+                <label for="bb-msg">What do you need?</label>
+                <textarea id="bb-msg" name="contact[body]" placeholder="e.g. 20 tubes of EG1130 speed 78, monthly"></textarea>
+              </div>
+            </div>
+            <button class="btn btn-primary" type="submit">{{ section.settings.submit_label }} <span class="arw">&rarr;</span></button>
+          {%- endif -%}
+        {%- endform -%}
+      </div>
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-bulk .bulk { background: var(--navy); color: var(--text-inv); padding: 120px 0; position: relative; overflow: hidden; border-top: 1px solid var(--line-inv); }
+  .bb-bulk .bulk::before { content: ''; position: absolute; right: -180px; top: -120px; width: 620px; height: 620px; border-radius: 50%; background: radial-gradient(circle, var(--blue) 0%, transparent 66%); opacity: 0.4; }
+  .bb-bulk .bulk-in { position: relative; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 60px; align-items: center; }
+  @media (max-width: 940px) { .bb-bulk .bulk-in { grid-template-columns: 1fr; gap: 44px; } }
+  .bb-bulk .bulk-copy .eyebrow { color: var(--blue-soft); }
+  .bb-bulk .bulk-copy h2 { font-size: clamp(38px, 5.2vw, 76px); margin-top: 18px; }
+  .bb-bulk .bulk-copy .lead { margin-top: 22px; max-width: 480px; font-size: 18px; line-height: 1.6; color: var(--dim-inv); }
+  .bb-bulk .tier-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 36px; }
+  @media (max-width: 520px) { .bb-bulk .tier-row { grid-template-columns: 1fr; } }
+  .bb-bulk .tier { background: var(--navy-2); border: 1px solid var(--line-inv); border-radius: 8px; padding: 20px 18px; transition: transform 0.25s, border-color 0.25s; }
+  .bb-bulk .tier:hover { transform: translateY(-5px); border-color: var(--accent); }
+  .bb-bulk .tier .q { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim-inv); }
+  .bb-bulk .tier .pct { font-family: var(--font-display); font-weight: 900; font-size: 40px; line-height: 1; margin-top: 10px; color: var(--text-inv); }
+  .bb-bulk .tier .pct b { color: var(--accent); font-weight: 900; }
+  .bb-bulk .tier .sub { font-size: 13px; color: var(--dim-inv); margin-top: 8px; }
+  .bb-bulk .bulk-note { margin-top: 24px; font-size: 14px; color: var(--dim-inv); display: flex; align-items: center; gap: 9px; }
+  .bb-bulk .bulk-note b { color: var(--accent); }
+
+  .bb-bulk .bulk-form { background: var(--navy-2); border: 1px solid var(--line-inv); border-radius: 12px; padding: 34px; box-shadow: 0 40px 90px -50px #000; }
+  .bb-bulk .bulk-form h3 { font-size: 23px; letter-spacing: -0.01em; color: var(--text-inv); }
+  .bb-bulk .bulk-form p.fp { color: var(--dim-inv); font-size: 14px; margin-top: 8px; margin-bottom: 22px; }
+  .bb-bulk .fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .bb-bulk .field { display: flex; flex-direction: column; gap: 7px; }
+  .bb-bulk .field.full { grid-column: 1 / -1; }
+  .bb-bulk .field label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim-inv); }
+  .bb-bulk .field input, .bb-bulk .field select, .bb-bulk .field textarea { background: rgba(255, 255, 255, 0.05); border: 1.5px solid var(--line-inv); border-radius: 5px; padding: 13px 14px; color: var(--text-inv); font-size: 15px; font-family: inherit; transition: border-color 0.2s, background 0.2s; }
+  .bb-bulk .field textarea { resize: vertical; min-height: 80px; }
+  .bb-bulk .field input:focus, .bb-bulk .field select:focus, .bb-bulk .field textarea:focus { outline: none; border-color: var(--blue-soft); background: rgba(255, 255, 255, 0.08); }
+  .bb-bulk .field select option { color: #0a1024; }
+  .bb-bulk .bulk-form .btn { width: 100%; justify-content: center; margin-top: 20px; }
+  .bb-bulk .bulk-ok { text-align: center; padding: 30px 10px; }
+  .bb-bulk .bulk-ok .ic { width: 62px; height: 62px; border-radius: 50%; background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--accent); display: grid; place-items: center; margin: 0 auto 18px; }
+  .bb-bulk .bulk-ok h3 { font-size: 24px; color: var(--text-inv); }
+  .bb-bulk .bulk-ok p { color: var(--dim-inv); margin-top: 10px; font-size: 15px; line-height: 1.6; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Bulk & clubs",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "text", "id": "anchor_id", "label": "Anchor id", "default": "bulk", "info": "Link to this section with #bulk" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Clubs · Coaches · Resellers" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Order by the box." },
+    { "type": "textarea", "id": "lead", "label": "Lead", "default": "Stocking a club, running a tournament, or kitting out a squad? Tell us what you need and we'll send a tailored quote within one business day." },
+    { "type": "text", "id": "note", "label": "Note", "default": "Need a large or recurring supply? Get in touch for custom pricing." },
+    { "type": "header", "content": "Quote form" },
+    { "type": "text", "id": "form_title", "label": "Form title", "default": "Request a bulk quote" },
+    { "type": "text", "id": "form_sub", "label": "Form subtitle", "default": "No account needed. No obligation." },
+    { "type": "text", "id": "submit_label", "label": "Submit label", "default": "Request my quote" },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ],
+  "presets": [
+    {
+      "name": "BB Bulk & clubs"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,107 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+  assign coll = collections[section.settings.collection]
+  assign limit = section.settings.products_to_show
+  assign cats = section.settings.filters | split: ','
+-%}
+
+<div
+  class="bb bb-showcase{% if section.settings.dark %} dark{% endif %}{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+  data-filter-group
+>
+  <section class="bb-shop">
+    <div class="bb-wrap">
+      <div class="bb-shop-head">
+        <div data-reveal>
+          {%- if section.settings.eyebrow != blank -%}
+            <span class="eyebrow" style="color:var(--blue)">{{ section.settings.eyebrow }}</span>
+          {%- endif -%}
+          <h2 class="display" style="margin-top:18px">{{ section.settings.heading }}</h2>
+        </div>
+        <div data-reveal data-d="1">
+          {%- if section.settings.lead != blank -%}
+            <p class="bb-shop-lead">{{ section.settings.lead }}</p>
+          {%- endif -%}
+          {%- if section.settings.show_filters and cats.size > 0 -%}
+            <div class="filters" style="margin-top:20px">
+              {%- for c in cats -%}
+                {%- assign label = c | strip -%}
+                <button type="button" data-filter="{{ label | escape }}"{% if forloop.first %} class="on"{% endif %}>{{ label }}</button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+
+      <div class="pgrid">
+        {%- if coll != blank and coll.products_count > 0 -%}
+          {%- for product in coll.products limit: limit -%}
+            {% render 'bb-product-card', product: product %}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for i in (1..limit) -%}
+            <article class="pc" data-reveal>
+              <div class="pc-media">{{ 'product-apparel-' | append: i | placeholder_svg_tag: 'placeholder' }}</div>
+              <div class="pc-info">
+                <a class="pc-name">Example product</a>
+                <div class="pc-price"><span class="now">$0.00</span></div>
+              </div>
+            </article>
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+
+      {%- if section.settings.button_label != blank -%}
+        <div class="bb-shop-foot">
+          <a class="btn btn-blue" href="{{ section.settings.button_link | default: coll.url | default: '#' }}">
+            {{ section.settings.button_label }} <span class="arw">&rarr;</span>
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-shop { background: var(--section-bg); color: var(--section-fg); padding: 120px 0; }
+  .bb-shop-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 30px; flex-wrap: wrap; margin-bottom: 46px; }
+  .bb-shop-head h2 { font-size: clamp(38px, 5vw, 72px); }
+  .bb-shop-lead { max-width: 420px; color: var(--section-dim); font-size: 17px; line-height: 1.6; margin-top: 16px; }
+  .bb-shop-foot { display: flex; justify-content: center; margin-top: 50px; }
+  .bb-showcase .pc[data-hide] { display: none; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Featured grid",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 12, "step": 1, "default": 4 },
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The collection" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Built for the birds that fly fast" },
+    { "type": "textarea", "id": "lead", "label": "Lead text", "default": "Every batch is speed-tested and graded before it ships. Filter by play level to find your match." },
+    { "type": "checkbox", "id": "show_filters", "label": "Show filter tabs", "default": true, "info": "Tabs filter the grid by each product's Type." },
+    { "type": "text", "id": "filters", "label": "Filter tabs (comma-separated)", "default": "All, Tournament, Club, Training", "info": "First tab shows everything; others must match product Type." },
+    { "type": "text", "id": "button_label", "label": "Footer button", "default": "View all shuttlecocks" },
+    { "type": "url", "id": "button_link", "label": "Footer button link" },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "dark", "label": "Dark background", "default": false },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ],
+  "presets": [{ "name": "BB Featured grid" }]
+}
+{% endschema %}

@@ -1,0 +1,264 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+  assign variant = product.selected_or_first_available_variant
+  assign on_sale = false
+  if variant.compare_at_price > variant.price
+    assign on_sale = true
+  endif
+  assign grade = product.metafields.custom.grade
+  assign feather = product.metafields.custom.feather
+  assign per_tube = product.metafields.custom.per_tube
+  assign coll = product.collections.first
+  assign form_id = 'bb-product-form-' | append: section.id
+-%}
+
+<div
+  class="bb bb-product{% if section.settings.dark %} dark{% endif %}{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+  data-bb-product
+  data-currency="{{ cart.currency.iso_code }}"
+>
+  <section class="pr">
+    <div class="bb-wrap">
+      <div class="pr-crumb">
+        <a href="{{ routes.root_url }}">Home</a><span>/</span>
+        {%- if coll -%}<a href="{{ coll.url }}">{{ coll.title }}</a><span>/</span>{%- endif -%}
+        <span style="color:var(--section-fg)">{{ product.title }}</span>
+      </div>
+
+      <div class="pr-in">
+        {%- comment -%} gallery {%- endcomment -%}
+        <div class="pr-gallery">
+          <div class="pr-main">
+            {%- if on_sale -%}<span class="pr-badge">Sale</span>{%- endif -%}
+            {%- assign featured = variant.featured_media | default: product.featured_media -%}
+            {%- if featured -%}
+              <img
+                data-bb-main-img
+                src="{{ featured | image_url: width: 1000 }}"
+                srcset="{{ featured | image_url: width: 600 }} 600w, {{ featured | image_url: width: 1000 }} 1000w"
+                sizes="(min-width: 900px) 52vw, 100vw"
+                alt="{{ product.title | escape }}"
+                width="1000"
+                height="1000"
+              >
+            {%- else -%}
+              {{ 'product-apparel-1' | placeholder_svg_tag: 'placeholder' }}
+            {%- endif -%}
+          </div>
+          {%- assign image_media = product.media | where: 'media_type', 'image' -%}
+          {%- if image_media.size > 1 -%}
+            <div class="pr-thumbs">
+              {%- for media in image_media -%}
+                <button
+                  type="button"
+                  class="pr-thumb{% if forloop.first %} on{% endif %}"
+                  data-bb-thumb
+                  data-media-id="{{ media.id }}"
+                  data-src="{{ media | image_url: width: 1000 }}"
+                  data-srcset="{{ media | image_url: width: 600 }} 600w, {{ media | image_url: width: 1000 }} 1000w"
+                  aria-label="View image {{ forloop.index }}"
+                >
+                  <img src="{{ media | image_url: width: 200 }}" alt="" width="200" height="200" loading="lazy">
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+        {%- comment -%} info {%- endcomment -%}
+        <div class="pr-info">
+          <div class="pr-tags">
+            {%- if grade != blank -%}<span class="grade">{{ grade }}</span>{%- endif -%}
+            {%- if product.vendor != blank or product.type != blank -%}
+              <span class="cat">{{ product.vendor }}{% if product.vendor != blank and product.type != blank %} · {% endif %}{{ product.type }}</span>
+            {%- endif -%}
+          </div>
+          <h1>{{ product.title }}</h1>
+
+          {%- if product.metafields.reviews.rating.value != blank -%}
+            <div class="pr-rate">
+              <span>{{ product.metafields.reviews.rating.value }} · {{ product.metafields.reviews.rating_count }} reviews</span>
+            </div>
+          {%- endif -%}
+
+          <div class="pr-priceblk">
+            <span class="now" data-bb-price-now>{{ variant.price | money }}</span>
+            <span class="was" data-bb-price-was{% unless on_sale %} hidden{% endunless %}>{{ variant.compare_at_price | money }}</span>
+          </div>
+
+          {%- if product.description != blank -%}
+            <div class="pr-desc rte">{{ product.description }}</div>
+          {%- endif -%}
+
+          {%- unless product.has_only_default_variant -%}
+            {%- for option in product.options_with_values -%}
+              <div class="pr-opt" data-option-index="{{ forloop.index0 }}">
+                <div class="lab">{{ option.name }} <b data-opt-current>{{ option.selected_value }}</b></div>
+                <div class="speed-row">
+                  {%- for value in option.values -%}
+                    <button type="button" class="speed-chip{% if option.selected_value == value %} on{% endif %}" data-value="{{ value | escape }}">
+                      <div class="n">{{ value }}</div>
+                    </button>
+                  {%- endfor -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          {%- endunless -%}
+
+          <product-form class="bb-productform" data-hide-errors="false" data-section-id="{{ section.id }}">
+            {%- form 'product', product, id: form_id, class: 'bb-pr-form', novalidate: 'novalidate', data-type: 'add-to-cart-form' -%}
+              <input type="hidden" name="id" value="{{ variant.id }}">
+              <div class="pr-buy">
+                <div class="qty">
+                  <button type="button" data-qty-step="-1" aria-label="Decrease quantity">&minus;</button>
+                  <span data-qty-value>1</span>
+                  <input type="hidden" name="quantity" value="1" min="1">
+                  <button type="button" data-qty-step="1" aria-label="Increase quantity">+</button>
+                </div>
+                <button
+                  type="submit"
+                  name="add"
+                  class="btn btn-primary pr-add"
+                  data-bb-add
+                  {% unless product.available %}disabled{% endunless %}
+                >
+                  <span data-bb-add-label>
+                    {%- if product.available -%}Add to cart · {{ variant.price | money }}{%- else -%}Sold out{%- endif -%}
+                  </span>
+                  <div class="loading__spinner hidden">{{ 'icon-spinner.svg' | inline_asset_content }}</div>
+                </button>
+              </div>
+              <div class="product-form__error-message-wrapper" role="alert" hidden>
+                <span class="product-form__error-message"></span>
+              </div>
+            {%- endform -%}
+          </product-form>
+
+          {%- comment -%} specs {%- endcomment -%}
+          <div class="pr-specs">
+            <h4>Specifications</h4>
+            <dl>
+              {%- if product.vendor != blank -%}<div class="sp"><dt>Brand</dt><dd>{{ product.vendor }}</dd></div>{%- endif -%}
+              {%- if product.type != blank -%}<div class="sp"><dt>Type</dt><dd>{{ product.type }}</dd></div>{%- endif -%}
+              {%- if grade != blank -%}<div class="sp"><dt>Grade</dt><dd>{{ grade }}</dd></div>{%- endif -%}
+              {%- if feather != blank -%}<div class="sp"><dt>Feather</dt><dd>{{ feather }}</dd></div>{%- endif -%}
+              {%- if per_tube != blank -%}<div class="sp"><dt>Per tube</dt><dd>{{ per_tube }}</dd></div>{%- endif -%}
+              <div class="sp"><dt>Availability</dt><dd>{% if product.available %}In stock{% else %}Sold out{% endif %}</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+      {%- comment -%} related {%- endcomment -%}
+      {%- if coll -%}
+        {%- assign related_count = 0 -%}
+        <div class="pr-related">
+          <h2 class="display">{{ section.settings.related_heading }}</h2>
+          <div class="pgrid">
+            {%- for rp in coll.products limit: 8 -%}
+              {%- if rp.id != product.id and related_count < 4 -%}
+                {% render 'bb-product-card', product: rp %}
+                {%- assign related_count = related_count | plus: 1 -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+
+  <script type="application/json" data-bb-variants>
+    [
+      {%- for v in product.variants -%}
+        {"id":{{ v.id }},"options":{{ v.options | json }},"available":{{ v.available }},"price":{{ v.price }},"price_formatted":{{ v.price | money | json }},"compare_at":{{ v.compare_at_price | default: 0 }},"compare_formatted":{{ v.compare_at_price | money | json }},"media_id":{{ v.featured_media.id | default: 'null' }}}{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    ]
+  </script>
+</div>
+
+<script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
+<script src="{{ 'bb-product.js' | asset_url }}" defer="defer"></script>
+
+{% stylesheet %}
+  .bb-product .pr { background: var(--section-bg); color: var(--section-fg); padding: 122px 0 100px; min-height: 100vh; }
+  .bb-product .pr-crumb { font-size: 13px; letter-spacing: 0.06em; color: var(--section-dim); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 30px; }
+  .bb-product .pr-crumb a:hover { color: var(--blue); }
+  .bb-product .pr-in { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: start; }
+  @media (max-width: 900px) { .bb-product .pr-in { grid-template-columns: 1fr; gap: 36px; } }
+
+  .bb-product .pr-gallery { position: sticky; top: 100px; display: flex; flex-direction: column; gap: 14px; }
+  @media (max-width: 900px) { .bb-product .pr-gallery { position: static; } }
+  .bb-product .pr-main { position: relative; border-radius: 12px; overflow: hidden; aspect-ratio: 1/1; background: linear-gradient(160deg, #0b1430, #15224c); border: 1px solid var(--section-line); }
+  .bb-product .pr-main img, .bb-product .pr-main svg { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .bb-product .pr-badge { position: absolute; top: 16px; left: 16px; z-index: 2; background: var(--accent); color: var(--navy); font-size: 12px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; padding: 7px 13px; border-radius: 3px; }
+  .bb-product .pr-thumbs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .bb-product .pr-thumb { border-radius: 8px; overflow: hidden; aspect-ratio: 1/1; border: 2px solid transparent; background: #0b1430; transition: border-color 0.2s; padding: 0; cursor: pointer; }
+  .bb-product .pr-thumb.on { border-color: var(--blue); }
+  .bb-product .pr-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+  .bb-product .pr-tags { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; }
+  .bb-product .pr-tags .grade { font-size: 11px; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); background: color-mix(in srgb, var(--blue) 12%, transparent); padding: 5px 10px; border-radius: 3px; }
+  .bb-product .pr-tags .cat { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--section-dim); }
+  .bb-product .pr-info h1 { font-size: clamp(30px, 3.6vw, 46px); margin: 16px 0 12px; letter-spacing: -0.015em; line-height: 1.05; }
+  .bb-product .pr-rate { display: flex; align-items: center; gap: 10px; color: var(--section-dim); font-size: 14px; }
+  .bb-product .pr-priceblk { display: flex; align-items: baseline; gap: 12px; margin: 22px 0 6px; }
+  .bb-product .pr-priceblk .now { font-family: var(--font-display); font-weight: 900; font-size: 38px; }
+  .bb-product .pr-priceblk .was { color: var(--section-dim); text-decoration: line-through; font-size: 18px; }
+  .bb-product .pr-desc { color: var(--section-dim); font-size: 16px; line-height: 1.65; margin: 18px 0 26px; max-width: 520px; }
+
+  .bb-product .pr-opt { margin-bottom: 22px; }
+  .bb-product .pr-opt .lab { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--section-dim); margin-bottom: 10px; display: flex; gap: 8px; align-items: center; }
+  .bb-product .pr-opt .lab b { color: var(--section-fg); font-weight: 700; }
+  .bb-product .speed-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .bb-product .speed-chip { min-width: 74px; padding: 12px 14px; border-radius: 7px; border: 1.5px solid var(--section-line); background: var(--section-card); color: var(--section-fg); text-align: center; cursor: pointer; transition: all 0.18s; }
+  .bb-product .speed-chip .n { font-family: var(--font-display); font-weight: 800; font-size: 18px; line-height: 1; }
+  .bb-product .speed-chip.on { border-color: var(--blue); background: color-mix(in srgb, var(--blue) 10%, var(--section-card)); }
+  .bb-product .speed-chip.soldout { opacity: 0.45; text-decoration: line-through; }
+  .bb-product .speed-chip[disabled] { opacity: 0.3; cursor: not-allowed; }
+
+  .bb-product .pr-buy { display: flex; gap: 14px; align-items: stretch; margin-bottom: 14px; flex-wrap: wrap; }
+  .bb-product .qty { display: flex; align-items: center; border: 1.5px solid var(--section-line); border-radius: 6px; overflow: hidden; background: var(--section-card); }
+  .bb-product .qty button { width: 48px; font-size: 20px; color: var(--section-fg); transition: background 0.15s; }
+  .bb-product .qty button:hover { background: color-mix(in srgb, var(--blue) 12%, transparent); }
+  .bb-product .qty span { min-width: 46px; text-align: center; font-weight: 700; font-size: 17px; }
+  .bb-product .pr-add { flex: 1; justify-content: center; min-width: 220px; }
+  .bb-product .pr-add[disabled] { opacity: 0.5; cursor: not-allowed; }
+  .bb-product .pr-add .loading__spinner { display: none; }
+  .bb-product .pr-add.loading .loading__spinner:not(.hidden) { display: inline-flex; }
+
+  .bb-product .pr-specs { margin-top: 30px; border-top: 1px solid var(--section-line); padding-top: 24px; }
+  .bb-product .pr-specs h4 { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--section-dim); margin-bottom: 14px; }
+  .bb-product .pr-specs dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; }
+  @media (max-width: 600px) { .bb-product .pr-specs dl { grid-template-columns: 1fr; } }
+  .bb-product .pr-specs .sp { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--section-line); font-size: 14.5px; }
+  .bb-product .pr-specs .sp dt { color: var(--section-dim); }
+  .bb-product .pr-specs .sp dd { margin: 0; font-weight: 600; text-align: right; }
+
+  .bb-product .pr-related { margin-top: 96px; }
+  .bb-product .pr-related h2 { font-size: clamp(28px, 3.4vw, 46px); margin-bottom: 30px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Product",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "text", "id": "related_heading", "label": "Related heading", "default": "Complete your kit" },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "dark", "label": "Dark background", "default": false },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ]
+}
+{% endschema %}

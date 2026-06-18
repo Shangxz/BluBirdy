@@ -1,0 +1,18 @@
+{
+  "sections": {
+    "bb_cart": {
+      "type": "bb-cart",
+      "settings": {
+        "heading": "Your cart",
+        "show_note": true,
+        "footer_note": "Taxes and shipping calculated at checkout · 48hr dispatch",
+        "empty_button": "Shop shuttlecocks",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "dark": false,
+        "use_volt": true
+      }
+    }
+  },
+  "order": ["bb_cart"]
+}

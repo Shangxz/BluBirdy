@@ -1,0 +1,289 @@
+/* ============================================================
+   BluBirdy theme skin for Dawn's chrome + commerce pages.
+   These override Dawn's own classes (header, footer, product,
+   cart, collection) so the whole store matches the homepage.
+   Tokens live on :root with a `bb-` prefix to avoid clashes.
+   ============================================================ */
+:root {
+  --bb-navy: #070b18;
+  --bb-navy-2: #0c1430;
+  --bb-paper: #edf1fa;
+  --bb-paper-2: #ffffff;
+  --bb-blue-h: 248;
+  --bb-blue: oklch(0.56 0.235 var(--bb-blue-h));
+  --bb-blue-soft: oklch(0.62 0.18 var(--bb-blue-h));
+  --bb-volt: #c8ff3b;
+  --bb-accent: var(--bb-volt);
+  --bb-text-inv: #eaf0ff;
+  --bb-dim-inv: #93a0c6;
+  --bb-line-inv: rgba(150, 170, 230, 0.16);
+  --bb-text: #0a1024;
+  --bb-dim: #586084;
+  --bb-line: rgba(10, 16, 40, 0.12);
+  --bb-font-display: 'Archivo Expanded', 'Archivo', sans-serif;
+  --bb-font-ui: 'Archivo', system-ui, sans-serif;
+}
+
+/* ============================================================
+   HEADER / TOP NAV
+   ============================================================ */
+.section-header {
+  margin-bottom: 0 !important;
+}
+.header-wrapper {
+  background: var(--bb-navy);
+  color: var(--bb-text-inv);
+  border-bottom: 1px solid var(--bb-line-inv);
+  transition: background 0.35s, backdrop-filter 0.35s, box-shadow 0.35s,
+    border-color 0.35s;
+}
+.header-wrapper--border-bottom {
+  border-bottom: 1px solid var(--bb-line-inv);
+}
+
+/* brand wordmark */
+.header__heading-link .h2,
+.header__heading-link span {
+  font-family: var(--bb-font-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--bb-text-inv);
+}
+
+/* nav links */
+.header__menu-item,
+.header__active-menu-item {
+  color: var(--bb-text-inv);
+}
+.header__menu-item {
+  font-family: var(--bb-font-ui);
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.86;
+  transition: opacity 0.2s;
+}
+.header__menu-item:hover {
+  opacity: 1;
+  color: var(--bb-text-inv);
+}
+.header__menu-item span {
+  position: relative;
+}
+.header__menu-item span::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -4px;
+  height: 2px;
+  background: var(--bb-accent);
+  transition: right 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.header__menu-item:hover span::after {
+  right: 0;
+}
+.header__active-menu-item {
+  text-underline-offset: 0.6rem;
+  text-decoration-color: var(--bb-accent);
+}
+
+/* icons */
+.header__icon,
+.header__icon .svg-wrapper,
+.header__icon--cart {
+  color: var(--bb-text-inv);
+}
+.header__icon:hover .svg-wrapper {
+  color: #fff;
+}
+.cart-count-bubble {
+  background: var(--bb-accent);
+  color: var(--bb-navy);
+}
+.cart-count-bubble span {
+  color: var(--bb-navy);
+  font-weight: 800;
+}
+
+/* search modal & menu drawer surfaces stay dark */
+.header__icon--menu .svg-wrapper {
+  color: var(--bb-text-inv);
+}
+
+/* mega-menu / dropdown panels */
+.header__submenu,
+.mega-menu__content {
+  background: var(--bb-navy-2);
+  color: var(--bb-text-inv);
+  border-color: var(--bb-line-inv);
+}
+.header__submenu .header__menu-item:hover {
+  color: var(--bb-accent);
+}
+
+/* ---- transparent overlay over the dark hero (homepage only) ---- */
+body.bb-home .section-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+}
+body.bb-home .header-wrapper {
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+body.bb-home.bb-nav-solid .header-wrapper {
+  background: rgba(7, 11, 24, 0.86);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  border-color: var(--bb-line-inv);
+  box-shadow: 0 12px 40px -24px #000;
+}
+
+/* ============================================================
+   GLOBAL — buttons, headings, accents on Dawn pages
+   ============================================================ */
+.button,
+.shopify-payment-button__button--unbranded,
+.product-form__submit {
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+  border-radius: 2px;
+}
+.button:not(.button--secondary):not([disabled]) {
+  --color-button: 200, 255, 59; /* volt */
+  --color-button-text: 7, 11, 24;
+}
+
+h1,
+.h1,
+h2,
+.h2 {
+  font-family: var(--bb-font-display);
+  letter-spacing: -0.01em;
+}
+
+/* price + sale accents */
+.price--on-sale .price-item--sale,
+.price__sale .price-item--sale {
+  color: var(--bb-blue);
+}
+
+/* ============================================================
+   COLLECTION PAGE
+   ============================================================ */
+.collection .title-wrapper h1,
+.collection-hero__title {
+  font-family: var(--bb-font-display);
+  text-transform: uppercase;
+}
+.facets__summary,
+.facets__heading,
+.active-facets__button {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.facet-checkbox input[type='checkbox']:checked + .svg-wrapper,
+.product-count__text {
+  color: var(--bb-blue);
+}
+
+/* ============================================================
+   PRODUCT PAGE
+   ============================================================ */
+.product__title h1,
+.product__title h2 {
+  font-family: var(--bb-font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.product .price__regular .price-item,
+.product .price__sale .price-item {
+  font-family: var(--bb-font-display);
+  font-weight: 800;
+}
+.product-form__submit {
+  --color-button: 200, 255, 59;
+  --color-button-text: 7, 11, 24;
+}
+.variant-input-wrapper input:checked + label,
+.product-form__input .select__select:focus {
+  border-color: var(--bb-blue);
+}
+
+/* ============================================================
+   CART / CART DRAWER
+   ============================================================ */
+.cart-drawer,
+.drawer__inner {
+  --bb-cart-fg: var(--bb-text);
+}
+.cart__checkout-button,
+.cart-drawer .cart__checkout-button {
+  --color-button: 200, 255, 59;
+  --color-button-text: 7, 11, 24;
+}
+.totals__total-value,
+.cart__footer .totals .totals__total-value {
+  font-family: var(--bb-font-display);
+  font-weight: 800;
+}
+.cart-item__name {
+  font-weight: 700;
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  background: var(--bb-navy);
+  color: var(--bb-text-inv);
+  border-top: 1px solid var(--bb-line-inv);
+}
+.footer .footer__content-top,
+.footer .footer__content-bottom {
+  border-color: var(--bb-line-inv);
+}
+.footer__heading,
+.footer-block__heading {
+  font-family: var(--bb-font-ui);
+  font-size: 1.3rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--bb-dim-inv);
+}
+.footer .footer-block__details-content a,
+.footer .list-menu__item--link,
+.footer__content-bottom-wrapper,
+.footer .copyright__content {
+  color: var(--bb-dim-inv);
+}
+.footer .list-menu__item--link:hover,
+.footer .footer-block__details-content a:hover {
+  color: var(--bb-text-inv);
+}
+.footer-block__brand-info,
+.footer__content-bottom .copyright {
+  color: var(--bb-dim-inv);
+}
+.footer .newsletter-form__field-wrapper .field__input {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--bb-line-inv);
+  color: var(--bb-text-inv);
+}
+.footer__list-social .list-social__link {
+  color: var(--bb-text-inv);
+}
+.footer__list-social .list-social__link:hover {
+  color: var(--bb-accent);
+}
+.footer .footer__payment .icon--full-color,
+.footer .payment-icon {
+  opacity: 0.7;
+}

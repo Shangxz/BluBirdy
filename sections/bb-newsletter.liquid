@@ -1,0 +1,82 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+-%}
+
+<div
+  class="bb bb-newsletter{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+>
+  <section class="news">
+    <div class="bb-wrap news-in">
+      <div data-reveal>
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="eyebrow" style="color:#fff">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        <h2 class="display" style="margin-top:16px">{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}
+          <p>{{ section.settings.text }}</p>
+        {%- endif -%}
+      </div>
+      {%- form 'customer', class: 'news-form' -%}
+        <input type="hidden" name="contact[tags]" value="newsletter">
+        {%- if form.posted_successfully? -%}
+          <input class="news-input" type="email" disabled value="Subscribed — thanks!" aria-label="Subscribed">
+          <button type="button" disabled>Joined &#10003;</button>
+        {%- else -%}
+          <input
+            class="news-input"
+            type="email"
+            name="contact[email]"
+            required
+            placeholder="{{ section.settings.placeholder }}"
+            aria-label="Email"
+          >
+          <button type="submit" name="commit">{{ section.settings.button_label }}</button>
+        {%- endif -%}
+      {%- endform -%}
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-newsletter .news { background: var(--blue); color: #fff; padding: 84px 0; position: relative; overflow: hidden; }
+  .bb-newsletter .news::after { content: ''; position: absolute; right: -60px; bottom: -80px; width: 360px; height: 360px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.18), transparent 70%); }
+  .bb-newsletter .news-in { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; }
+  @media (max-width: 760px) { .bb-newsletter .news-in { grid-template-columns: 1fr; gap: 26px; } }
+  .bb-newsletter .news h2 { font-size: clamp(32px, 4vw, 54px); }
+  .bb-newsletter .news p { margin-top: 14px; color: rgba(255, 255, 255, 0.82); font-size: 17px; max-width: 420px; }
+  .bb-newsletter .news-form { display: flex; gap: 10px; max-width: 480px; width: 100%; justify-self: end; }
+  @media (max-width: 760px) { .bb-newsletter .news-form { justify-self: start; } }
+  .bb-newsletter .news-form input { flex: 1; background: rgba(255, 255, 255, 0.14); border: 1.5px solid rgba(255, 255, 255, 0.32); border-radius: 3px; padding: 16px 18px; color: #fff; font-size: 15px; font-family: inherit; }
+  .bb-newsletter .news-form input::placeholder { color: rgba(255, 255, 255, 0.7); }
+  .bb-newsletter .news-form input:focus { outline: none; border-color: #fff; background: rgba(255, 255, 255, 0.2); }
+  .bb-newsletter .news-form button { background: var(--accent); color: var(--navy); font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; padding: 0 26px; border-radius: 3px; white-space: nowrap; border: none; cursor: pointer; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Newsletter",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Join the flock" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Get first dibs on limited drops" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Speed guides, restock alerts and member-only pricing on tournament tubes." },
+    { "type": "text", "id": "placeholder", "label": "Input placeholder", "default": "you@email.com" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Subscribe" },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ],
+  "presets": [{ "name": "BB Newsletter" }]
+}
+{% endschema %}

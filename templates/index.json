@@ -1,0 +1,129 @@
+{
+  "sections": {
+    "bb_hero": {
+      "type": "bb-hero",
+      "settings": {
+        "eyebrow": "Tournament-grade feather shuttlecocks",
+        "heading": "Elevate Your Game",
+        "subtext": "Precision-balanced goose-feather shuttles built for speed, stability and the long rallies that decide matches. Trusted on club courts everywhere.",
+        "image": "shopify://shop_images/2023324143958.jpg",
+        "show_scroll_cue": true,
+        "button_label": "Shop Shuttlecocks",
+        "button_link": "shopify://collections/all",
+        "button_label_2": "Explore the grades",
+        "link_label": "Buying for a club? Bulk pricing",
+        "link_url": "#bulk",
+        "stat_1_number": "77–79",
+        "stat_1_label": "Aeroplane speed",
+        "stat_2_number": "16",
+        "stat_2_label": "Goose feathers",
+        "stat_3_number": "200+",
+        "stat_3_label": "Clubs supplied",
+        "chip_1_value": "Speed 79",
+        "chip_1_label": "Fast",
+        "chip_2_value": "Excellent",
+        "chip_2_label": "Feather grade",
+        "chip_3_value": "EG1130 · LE",
+        "chip_3_label": "Limited edition",
+        "layout": "split",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "use_volt": true
+      }
+    },
+    "bb_marquee": {
+      "type": "bb-marquee",
+      "settings": {
+        "items": "Tournament Grade, Goose Feather, 77–79 Speed, Bulk Discounts, 48hr Dispatch, Club Trusted",
+        "use_volt": true
+      }
+    },
+    "bb_showcase": {
+      "type": "bb-showcase",
+      "settings": {
+        "collection": "badminton-feather-shuttlecocks",
+        "products_to_show": 4,
+        "eyebrow": "The collection",
+        "heading": "Built for the birds that fly fast",
+        "lead": "Every batch is speed-tested and graded before it ships. Filter by play level to find your match.",
+        "show_filters": true,
+        "filters": "All, Tournament, Club, Training",
+        "button_label": "View all shuttlecocks",
+        "button_link": "shopify://collections/all",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "dark": false,
+        "use_volt": true
+      }
+    },
+    "bb_bulk": {
+      "type": "bb-bulk",
+      "blocks": {},
+      "block_order": [],
+      "settings": {
+        "anchor_id": "bulk",
+        "eyebrow": "Clubs · Coaches · Resellers",
+        "heading": "Order by the box.",
+        "lead": "Stocking a club, running a tournament, or kitting out a squad? Tell us what you need and we'll send a tailored quote within one business day.",
+        "note": "Need a large or recurring supply? Get in touch for custom pricing.",
+        "form_title": "Request a bulk quote",
+        "form_sub": "No account needed. No obligation.",
+        "submit_label": "Request my quote",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "use_volt": true
+      }
+    },
+    "bb_anatomy": {
+      "type": "bb-anatomy",
+      "blocks": {
+        "s1": { "type": "spot", "settings": { "x": 38, "y": 30, "kicker": "16 feathers", "title": "16 left-wing goose feathers", "text": "Hand-sorted from the same wing for symmetric rotation and a stable, predictable flight path." } },
+        "s2": { "type": "spot", "settings": { "x": 64, "y": 44, "kicker": "2 rings", "title": "Double-stitched skirt", "text": "Twin reinforcing threads lock the feather spread, holding shape through hard tournament rallies." } },
+        "s3": { "type": "spot", "settings": { "x": 50, "y": 56, "kicker": "4.74–5.50g", "title": "Speed-tuned weight", "text": "Each tube is matched to a speed band so flight stays repeatable from the first bird to the last." } },
+        "s4": { "type": "spot", "settings": { "x": 50, "y": 78, "kicker": "14–16mm", "title": "Natural cork base", "text": "First-grade compressed cork wrapped in PU leather for a true, consistent rebound off the strings." } }
+      },
+      "block_order": ["s1", "s2", "s3", "s4"],
+      "settings": {
+        "image": "shopify://shop_images/edc5ea2f.jpg",
+        "eyebrow": "Engineered for flight",
+        "heading": "Anatomy of a winning bird",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "dark": false,
+        "use_volt": true
+      }
+    },
+    "bb_pillars": {
+      "type": "bb-pillars",
+      "blocks": {
+        "p1": { "type": "pillar", "settings": { "icon": "pulse", "title": "Speed-tested batches", "text": "Every tube graded to a speed band before dispatch." } },
+        "p2": { "type": "pillar", "settings": { "icon": "flight", "title": "Stable, true flight", "text": "Symmetric goose feathers for a predictable parabola." } },
+        "p3": { "type": "pillar", "settings": { "icon": "truck", "title": "Dispatched in 48 hrs", "text": "Stocked and shipped fast from our own warehouse." } }
+      },
+      "block_order": ["p1", "p2", "p3"],
+      "settings": { "accent_color": "Electric", "use_volt": true }
+    },
+    "bb_newsletter": {
+      "type": "bb-newsletter",
+      "settings": {
+        "eyebrow": "Join the flock",
+        "heading": "Get first dibs on limited drops",
+        "text": "Speed guides, restock alerts and member-only pricing on tournament tubes.",
+        "placeholder": "you@email.com",
+        "button_label": "Subscribe",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "use_volt": true
+      }
+    }
+  },
+  "order": [
+    "bb_hero",
+    "bb_marquee",
+    "bb_showcase",
+    "bb_bulk",
+    "bb_anatomy",
+    "bb_pillars",
+    "bb_newsletter"
+  ]
+}

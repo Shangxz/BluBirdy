@@ -1,0 +1,163 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+  assign cats = section.settings.filters | split: ','
+-%}
+
+<div
+  class="bb bb-collection{% if section.settings.dark %} dark{% endif %}{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+  data-filter-group
+>
+  <section class="col">
+    <div class="bb-wrap">
+      <div class="col-crumb">
+        <a href="{{ routes.root_url }}">Home</a>
+        <span>/</span>
+        <span style="color:var(--section-fg)">{{ collection.title }}</span>
+      </div>
+
+      <div class="col-head">
+        <div>
+          <h1 class="display">{{ collection.title }}</h1>
+          <div class="cnt">{{ collection.products_count }} product{{ collection.products_count | pluralize: '', 's' }}{% if section.settings.subtitle != blank %} · {{ section.settings.subtitle }}{% endif %}</div>
+        </div>
+      </div>
+
+      {%- if collection.description != blank and section.settings.show_description -%}
+        <div class="col-desc rte">{{ collection.description }}</div>
+      {%- endif -%}
+
+      <div class="col-bar">
+        {%- if section.settings.show_filters and cats.size > 0 -%}
+          <div class="filters">
+            {%- for c in cats -%}
+              {%- assign label = c | strip -%}
+              <button type="button" data-filter="{{ label | escape }}"{% if forloop.first %} class="on"{% endif %}>{{ label }}</button>
+            {%- endfor -%}
+          </div>
+        {%- else -%}
+          <span></span>
+        {%- endif -%}
+
+        {%- if section.settings.enable_sorting -%}
+          <div class="col-sort">
+            <label for="bb-sortsel">Sort</label>
+            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+            <select id="bb-sortsel" data-bb-sort>
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- paginate collection.products by section.settings.products_per_page -%}
+        {%- if collection.products.size > 0 -%}
+          <div class="pgrid">
+            {%- for product in collection.products -%}
+              {% render 'bb-product-card', product: product %}
+            {%- endfor -%}
+          </div>
+
+          {%- if paginate.pages > 1 -%}
+            <nav class="bb-pagination" role="navigation" aria-label="Pagination">
+              {%- if paginate.previous -%}
+                <a href="{{ paginate.previous.url }}" class="bb-page" aria-label="Previous">&larr;</a>
+              {%- endif -%}
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <a href="{{ part.url }}" class="bb-page">{{ part.title }}</a>
+                {%- elsif part.title == paginate.current_page -%}
+                  <span class="bb-page on">{{ part.title }}</span>
+                {%- else -%}
+                  <span class="bb-page dots">{{ part.title }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if paginate.next -%}
+                <a href="{{ paginate.next.url }}" class="bb-page" aria-label="Next">&rarr;</a>
+              {%- endif -%}
+            </nav>
+          {%- endif -%}
+        {%- else -%}
+          <p class="col-empty">No products found in this collection yet.</p>
+        {%- endif -%}
+      {%- endpaginate -%}
+
+      {%- if section.settings.show_bulk_cta -%}
+        <div class="col-bulk" data-reveal>
+          <div>
+            <h3 class="display">{{ section.settings.bulk_heading }}</h3>
+            <p>{{ section.settings.bulk_text }}</p>
+          </div>
+          <a class="btn btn-primary" href="{{ section.settings.bulk_link | default: '/#bulk' }}">{{ section.settings.bulk_button }} <span class="arw">&rarr;</span></a>
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-collection .col { background: var(--section-bg); color: var(--section-fg); min-height: 100vh; padding: 128px 0 110px; }
+  .bb-collection .col-crumb { font-size: 13px; letter-spacing: 0.06em; color: var(--section-dim); display: flex; gap: 8px; align-items: center; }
+  .bb-collection .col-crumb a { color: var(--section-dim); }
+  .bb-collection .col-crumb a:hover { color: var(--blue); }
+  .bb-collection .col-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 26px; flex-wrap: wrap; margin: 18px 0 18px; }
+  .bb-collection .col-head h1 { font-size: clamp(40px, 6vw, 86px); line-height: 1; }
+  .bb-collection .col-head .cnt { color: var(--section-dim); font-size: 15px; margin-top: 20px; }
+  .bb-collection .col-desc { max-width: 640px; color: var(--section-dim); font-size: 16px; line-height: 1.6; margin-bottom: 8px; }
+  .bb-collection .col-bar { display: flex; align-items: center; justify-content: space-between; gap: 18px; flex-wrap: wrap; padding: 18px 0 30px; border-bottom: 1px solid var(--section-line); margin-bottom: 36px; }
+  .bb-collection .col-sort { display: flex; align-items: center; gap: 10px; }
+  .bb-collection .col-sort label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--section-dim); }
+  .bb-collection .col-sort select { background: var(--section-card); border: 1.5px solid var(--section-line); border-radius: 5px; padding: 10px 14px; color: var(--section-fg); font-family: inherit; font-size: 14px; font-weight: 600; }
+  .bb-collection .pc[data-hide] { display: none; }
+  .bb-collection .col-empty { color: var(--section-dim); font-size: 17px; padding: 40px 0; }
+
+  .bb-collection .bb-pagination { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 54px; }
+  .bb-collection .bb-page { min-width: 42px; height: 42px; padding: 0 12px; display: grid; place-items: center; border-radius: 6px; border: 1.5px solid var(--section-line); color: var(--section-fg); font-weight: 700; font-size: 14px; transition: all 0.2s; }
+  .bb-collection .bb-page:hover { border-color: var(--blue); color: var(--blue); }
+  .bb-collection .bb-page.on { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .bb-collection .bb-page.dots { border: none; min-width: 22px; }
+
+  .bb-collection .col-bulk { margin-top: 60px; background: var(--blue); color: #fff; border-radius: 12px; padding: 40px 44px; display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap; position: relative; overflow: hidden; }
+  .bb-collection .col-bulk::after { content: ''; position: absolute; right: -50px; bottom: -70px; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.16), transparent 70%); }
+  .bb-collection .col-bulk h3 { font-size: clamp(24px, 3vw, 36px); position: relative; }
+  .bb-collection .col-bulk p { color: rgba(255, 255, 255, 0.85); margin-top: 8px; font-size: 16px; position: relative; max-width: 520px; }
+  .bb-collection .col-bulk .btn { position: relative; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Collection grid",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "text", "id": "subtitle", "label": "Subtitle (after count)", "default": "speed-tested & graded" },
+    { "type": "checkbox", "id": "show_description", "label": "Show collection description", "default": false },
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 4, "max": 24, "step": 4, "default": 16 },
+    { "type": "header", "content": "Filters & sorting" },
+    { "type": "checkbox", "id": "show_filters", "label": "Show filter tabs", "default": true, "info": "Tabs filter the current page by each product's Type." },
+    { "type": "text", "id": "filters", "label": "Filter tabs (comma-separated)", "default": "All, Tournament, Club, Training" },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Enable sort dropdown", "default": true },
+    { "type": "header", "content": "Bulk CTA band" },
+    { "type": "checkbox", "id": "show_bulk_cta", "label": "Show bulk CTA", "default": true },
+    { "type": "text", "id": "bulk_heading", "label": "Heading", "default": "Kitting out a club?" },
+    { "type": "textarea", "id": "bulk_text", "label": "Text", "default": "Buying for a club, team, or as a reseller? Tell us what you need and we'll send a tailored quote within a day." },
+    { "type": "text", "id": "bulk_button", "label": "Button", "default": "Get bulk pricing" },
+    { "type": "url", "id": "bulk_link", "label": "Button link", "info": "Defaults to the homepage bulk section (/#bulk)." },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "dark", "label": "Dark background", "default": false },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ]
+}
+{% endschema %}

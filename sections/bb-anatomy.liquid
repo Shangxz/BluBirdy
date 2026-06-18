@@ -1,0 +1,129 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+  assign active = 0
+  assign first = section.blocks[active]
+-%}
+
+<div
+  class="bb bb-anatomy{% if section.settings.dark %} dark{% endif %}{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+>
+  <section class="ana">
+    <div class="bb-wrap ana-in">
+      <div class="ana-stage" data-reveal>
+        {%- if section.settings.image != blank -%}
+          {{ section.settings.image | image_url: width: 1400 | image_tag: widths: '600, 900, 1400', sizes: '(min-width: 900px) 55vw, 90vw', alt: section.settings.image.alt }}
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+        {%- endif -%}
+        {%- for block in section.blocks -%}
+          <button
+            type="button"
+            class="spot{% if forloop.index0 == active %} on{% endif %}"
+            data-spot="{{ forloop.index0 }}"
+            data-k="{{ block.settings.kicker | escape }}"
+            data-t="{{ block.settings.title | escape }}"
+            data-desc="{{ block.settings.text | escape }}"
+            style="left:{{ block.settings.x }}%;top:{{ block.settings.y }}%"
+            aria-label="{{ block.settings.title | escape }}"
+            {{ block.shopify_attributes }}
+          >{{ forloop.index }}</button>
+        {%- endfor -%}
+      </div>
+      <div class="ana-copy" data-reveal data-d="1">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="eyebrow">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        <h2 class="display">{{ section.settings.heading }}</h2>
+        <div class="ana-detail">
+          <div class="k" data-spot-k>{{ first.settings.kicker }}</div>
+          <h3 data-spot-t>{{ first.settings.title }}</h3>
+          <p data-spot-d>{{ first.settings.text }}</p>
+        </div>
+        <div class="ana-nav">
+          {%- for block in section.blocks -%}
+            <button type="button" class="{% if forloop.index0 == active %}on{% endif %}" data-spot-nav="{{ forloop.index0 }}" aria-label="Show {{ block.settings.title | escape }}"></button>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-anatomy .ana { background: var(--paper-2); color: var(--section-fg); padding: 120px 0; border-top: 1px solid var(--section-line); }
+  .bb-anatomy.dark .ana { background: var(--navy-2); }
+  .bb-anatomy .ana-in { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 60px; align-items: center; }
+  @media (max-width: 900px) { .bb-anatomy .ana-in { grid-template-columns: 1fr; gap: 36px; } }
+  .bb-anatomy .ana-stage { position: relative; border-radius: 10px; overflow: hidden; background: radial-gradient(circle at 50% 40%, #f4f7fd, #dde6f5); aspect-ratio: 4/3; border: 1px solid var(--section-line); }
+  .bb-anatomy.dark .ana-stage { background: radial-gradient(circle at 50% 40%, #16224a, #0b1430); }
+  .bb-anatomy .ana-stage img,
+  .bb-anatomy .ana-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; padding: 6%; filter: drop-shadow(0 30px 50px rgba(8, 14, 40, 0.28)); }
+  .bb-anatomy .spot { position: absolute; transform: translate(-50%, -50%); width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--blue); color: #fff; font-weight: 800; font-size: 13px; cursor: pointer; border: 2px solid #fff; box-shadow: 0 6px 18px -4px var(--blue); transition: transform 0.2s; }
+  .bb-anatomy .spot::after { content: ''; position: absolute; inset: -7px; border-radius: 50%; border: 2px solid var(--blue); opacity: 0.5; animation: bb-pulse 2.4s ease-out infinite; }
+  .bb-anatomy .spot:hover { transform: translate(-50%, -50%) scale(1.18); }
+  .bb-anatomy .spot.on { background: var(--accent); color: var(--navy); box-shadow: 0 6px 22px -4px var(--accent); }
+  .bb-anatomy .spot.on::after { border-color: var(--accent); }
+  @keyframes bb-pulse { 0% { transform: scale(0.7); opacity: 0.6; } 100% { transform: scale(1.5); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .bb-anatomy .spot::after { animation: none; } }
+  .bb-anatomy .ana-copy .eyebrow { color: var(--blue); }
+  .bb-anatomy .ana-copy h2 { font-size: clamp(34px, 4.4vw, 60px); margin-top: 18px; }
+  .bb-anatomy .ana-detail { margin-top: 30px; border-left: 3px solid var(--accent); padding-left: 22px; min-height: 148px; }
+  .bb-anatomy .ana-detail .k { font-family: var(--font-display); font-weight: 800; font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue); }
+  .bb-anatomy .ana-detail h3 { font-size: 26px; margin: 8px 0 12px; letter-spacing: -0.01em; }
+  .bb-anatomy .ana-detail p { color: var(--section-dim); font-size: 17px; line-height: 1.6; max-width: 440px; }
+  .bb-anatomy .ana-nav { display: flex; gap: 8px; margin-top: 26px; }
+  .bb-anatomy .ana-nav button { width: 34px; height: 6px; border-radius: 6px; background: var(--section-line); transition: background 0.2s, width 0.2s; }
+  .bb-anatomy .ana-nav button.on { background: var(--accent); width: 54px; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Anatomy",
+  "tag": "section",
+  "class": "bb-section",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Product image" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Engineered for flight" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Anatomy of a winning bird" },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "dark", "label": "Dark background", "default": false },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "spot",
+      "name": "Hotspot",
+      "settings": [
+        { "type": "range", "id": "x", "label": "Horizontal position (%)", "min": 0, "max": 100, "step": 1, "default": 50 },
+        { "type": "range", "id": "y", "label": "Vertical position (%)", "min": 0, "max": 100, "step": 1, "default": 50 },
+        { "type": "text", "id": "kicker", "label": "Kicker", "default": "16 feathers" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Hotspot title" },
+        { "type": "textarea", "id": "text", "label": "Description", "default": "Describe this part of the product." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "BB Anatomy",
+      "blocks": [
+        { "type": "spot", "settings": { "x": 38, "y": 30, "kicker": "16 feathers", "title": "16 left-wing goose feathers", "text": "Hand-sorted from the same wing for symmetric rotation and a stable, predictable flight path." } },
+        { "type": "spot", "settings": { "x": 64, "y": 44, "kicker": "2 rings", "title": "Double-stitched skirt", "text": "Twin reinforcing threads lock the feather spread, holding shape through hard tournament rallies." } },
+        { "type": "spot", "settings": { "x": 50, "y": 56, "kicker": "4.74–5.50g", "title": "Speed-tuned weight", "text": "Each tube is matched to a speed band so flight stays repeatable from the first bird to the last." } },
+        { "type": "spot", "settings": { "x": 50, "y": 78, "kicker": "14–16mm", "title": "Natural cork base", "text": "First-grade compressed cork wrapped in PU leather for a true, consistent rebound off the strings." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

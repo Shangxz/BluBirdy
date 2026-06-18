@@ -1,0 +1,38 @@
+{%- liquid
+  assign items = section.settings.items | split: ','
+-%}
+
+<div class="bb bb-marquee{% unless section.settings.use_volt %} no-volt{% endunless %}">
+  <div class="mq">
+    <div class="mq-track">
+      {%- for pass in (1..2) -%}
+        {%- for item in items -%}
+          <div class="mq-item"><span>{{ item | strip }}</span><i class="sep"></i></div>
+        {%- endfor -%}
+      {%- endfor -%}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .bb-marquee .mq { background: var(--accent); color: var(--navy); overflow: hidden; border-top: 1px solid rgba(0, 0, 0, 0.08); border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+  .bb-marquee .mq-track { display: flex; gap: 0; width: max-content; animation: bb-mqmove 26s linear infinite; }
+  .bb-marquee .mq-item { display: flex; align-items: center; gap: 30px; padding: 15px 0; }
+  .bb-marquee .mq-item span { font-family: var(--font-display); font-weight: 800; font-size: 18px; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+  .bb-marquee .mq-item .sep { width: 9px; height: 9px; background: var(--navy); transform: rotate(45deg); margin: 0 30px; }
+  @keyframes bb-mqmove { to { transform: translateX(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .bb-marquee .mq-track { animation: none; } }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Marquee",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "text", "id": "items", "label": "Items (comma-separated)", "default": "Tournament Grade, Goose Feather, 77–79 Speed, Bulk Discounts, 48hr Dispatch, Club Trusted" },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ],
+  "presets": [{ "name": "BB Marquee" }]
+}
+{% endschema %}

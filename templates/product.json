@@ -1,0 +1,15 @@
+{
+  "sections": {
+    "bb_product": {
+      "type": "bb-product",
+      "settings": {
+        "related_heading": "Complete your kit",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "dark": false,
+        "use_volt": true
+      }
+    }
+  },
+  "order": ["bb_product"]
+}

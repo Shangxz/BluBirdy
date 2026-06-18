@@ -1,0 +1,515 @@
+{% doc %}
+  @prompt
+    product order form, I just want the quantity to be a numerical fill in instead of a button dial, I want this closer to the current theme, The product name section should be a drop down with 2 options - "Aeroplane Black Label EG1130 - 35$" and "Aeroplane Black Gold Label EG1130LE - 37$", Remove the heading and description
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-product-order-form-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    /* prevent full-stretch on large screens */
+    max-width: min({{ block.settings.desktop_width_percent }}%, 640px);
+    margin: 0 auto;
+    padding: {{ block.settings.form_padding }}px;
+    background-color: {{ block.settings.background_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+  }
+
+  .ai-product-order-form__content-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .ai-product-order-form__field-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ai-product-order-form__label-{{ ai_gen_id }} {
+    font-size: 14px;
+    font-weight: 600;
+    color: {{ block.settings.text_color }};
+    font-family: var(--font-body-family);
+  }
+
+  .ai-product-order-form__required-{{ ai_gen_id }} {
+    color: {{ block.settings.error_color }};
+  }
+
+  .ai-product-order-form__input-{{ ai_gen_id }},
+  .ai-product-order-form__select-{{ ai_gen_id }},
+  .ai-product-order-form__textarea-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid rgba({{ block.settings.text_color | color_extract: 'red' }}, {{ block.settings.text_color | color_extract: 'green' }}, {{ block.settings.text_color | color_extract: 'blue' }}, 0.55);
+    border-radius: 40px;
+    font-size: 14px;
+    background-color: {{ block.settings.input_background_color }};
+    color: {{ block.settings.text_color }};
+    font-family: var(--font-body-family);
+  }
+
+  /* Make dropdowns match the pill styling and add a custom chevron */
+  .ai-product-order-form__select-{{ ai_gen_id }} {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+
+    cursor: pointer;
+    padding-right: 48px; /* room for chevron */
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='rgba({{ block.settings.text_color | color_extract: 'red' }}, {{ block.settings.text_color | color_extract: 'green' }}, {{ block.settings.text_color | color_extract: 'blue' }}, 0.85)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 18px 18px;
+  }
+
+  .ai-product-order-form__textarea-{{ ai_gen_id }} {
+    border-radius: 20px;
+  }
+
+  .ai-product-order-form__input-{{ ai_gen_id }}:focus,
+  .ai-product-order-form__select-{{ ai_gen_id }}:focus,
+  .ai-product-order-form__textarea-{{ ai_gen_id }}:focus {
+    outline: 2px solid {{ block.settings.button_color }};
+    outline-offset: 2px;
+  }
+
+  .ai-product-order-form__textarea-{{ ai_gen_id }} {
+    min-height: 100px;
+    resize: vertical;
+  }
+
+  .ai-product-order-form__button-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 16px 24px;
+    background-color: {{ block.settings.button_color }};
+    color: {{ block.settings.button_text_color }};
+    border: none;
+    border-radius: 40px; /* match pill style */
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: var(--font-body-family);
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-product-order-form__button-{{ ai_gen_id }}:hover {
+    background-color: {{ block.settings.button_hover_color }};
+  }
+
+  .ai-product-order-form__success-{{ ai_gen_id }} {
+    padding: 16px;
+    background-color: {{ block.settings.success_bg_color }};
+    color: {{ block.settings.success_color }};
+    border-radius: 8px;
+    margin-top: 16px;
+    text-align: center;
+    font-family: var(--font-body-family);
+  }
+
+  .ai-product-order-form__error-{{ ai_gen_id }} {
+    color: {{ block.settings.error_color }};
+    font-size: 13px;
+    margin-top: 4px;
+    font-family: var(--font-body-family);
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-product-order-form-{{ ai_gen_id }} {
+      max-width: 100%;
+    }
+  }
+{% endstyle %}
+
+<product-order-form-{{ ai_gen_id }}
+  class="ai-product-order-form-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  {%- form 'contact' -%}
+    <input type="hidden" name="contact[order_type]" value="product_order">
+    
+    <div class="ai-product-order-form__content-{{ ai_gen_id }}">
+      {%- if block.settings.show_product_field -%}
+        <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+          <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="product-{{ ai_gen_id }}">
+            {{ block.settings.product_label }}
+            <span class="ai-product-order-form__required-{{ ai_gen_id }}">*</span>
+          </label>
+          <select
+            id="product-{{ ai_gen_id }}"
+            name="contact[product]"
+            class="ai-product-order-form__select-{{ ai_gen_id }}"
+            required
+            aria-required="true"
+          >
+            <option value="" disabled selected>Select a product</option>
+            <option value="Aeroplane Black Label EG1130 - 35$">Aeroplane Black Label EG1130 - 35$</option>
+            <option value="Aeroplane Black Gold Label EG1130LE - 37$">Aeroplane Black Gold Label EG1130LE - 37$</option>
+          </select>
+        </div>
+      {%- endif -%}
+
+      <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+        <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="tournament-{{ ai_gen_id }}">
+          Tournament
+          <span class="ai-product-order-form__required-{{ ai_gen_id }}">*</span>
+        </label>
+        <select
+          id="tournament-{{ ai_gen_id }}"
+          name="contact[tournament]"
+          class="ai-product-order-form__select-{{ ai_gen_id }}"
+          required
+          aria-required="true"
+        >
+          <option value="" disabled selected>Select a tournament</option>
+          <option value="UMICH Open March 21/22">UMICH Open March 21/22</option>
+        </select>
+      </div>
+
+      <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+        <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="name-{{ ai_gen_id }}">
+          {{ block.settings.name_label }}
+          <span class="ai-product-order-form__required-{{ ai_gen_id }}">*</span>
+        </label>
+        <input
+          type="text"
+          id="name-{{ ai_gen_id }}"
+          name="contact[name]"
+          class="ai-product-order-form__input-{{ ai_gen_id }}"
+          value="{{ form.name }}"
+          required
+          aria-required="true"
+        >
+      </div>
+
+      <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+        <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="email-{{ ai_gen_id }}">
+          {{ block.settings.email_label }}
+          <span class="ai-product-order-form__required-{{ ai_gen_id }}">*</span>
+        </label>
+        <input
+          type="email"
+          id="email-{{ ai_gen_id }}"
+          name="contact[email]"
+          class="ai-product-order-form__input-{{ ai_gen_id }}"
+          value="{{ form.email }}"
+          autocomplete="email"
+          required
+          aria-required="true"
+          {% if form.errors %}
+            aria-invalid="true"
+            aria-describedby="email-error-{{ ai_gen_id }}"
+          {% endif %}
+        >
+        {%- if form.errors -%}
+          <div id="email-error-{{ ai_gen_id }}" class="ai-product-order-form__error-{{ ai_gen_id }}">
+            {{ form.errors.messages.email }}
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if block.settings.show_phone_field -%}
+        <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+          <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="phone-{{ ai_gen_id }}">
+            {{ block.settings.phone_label }}
+            {% if block.settings.phone_required %}
+              <span class="ai-product-order-form__required-{{ ai_gen_id }}">*</span>
+            {% endif %}
+          </label>
+          <input
+            type="tel"
+            id="phone-{{ ai_gen_id }}"
+            name="contact[phone]"
+            class="ai-product-order-form__input-{{ ai_gen_id }}"
+            autocomplete="tel"
+            {% if block.settings.phone_required %}required aria-required="true"{% endif %}
+          >
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.show_quantity_field -%}
+        <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+          <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="quantity-{{ ai_gen_id }}">
+            {{ block.settings.quantity_label }}
+          </label>
+          <input
+            type="number"
+            id="quantity-{{ ai_gen_id }}"
+            name="contact[quantity]"
+            class="ai-product-order-form__input-{{ ai_gen_id }}"
+            value="1"
+            min="1"
+            max="999"
+            inputmode="numeric"
+            pattern="[0-9]*"
+          >
+        </div>
+      {%- endif -%}
+
+      {%- if block.settings.show_message_field -%}
+        <div class="ai-product-order-form__field-{{ ai_gen_id }}">
+          <label class="ai-product-order-form__label-{{ ai_gen_id }}" for="message-{{ ai_gen_id }}">
+            {{ block.settings.message_label }}
+          </label>
+          <textarea
+            id="message-{{ ai_gen_id }}"
+            name="contact[message]"
+            class="ai-product-order-form__textarea-{{ ai_gen_id }}"
+            placeholder="{{ block.settings.message_placeholder }}"
+          ></textarea>
+        </div>
+      {%- endif -%}
+
+      <button type="submit" class="ai-product-order-form__button-{{ ai_gen_id }}">
+        {{ block.settings.button_label }}
+      </button>
+
+      {%- if form.posted_successfully? -%}
+        <div class="ai-product-order-form__success-{{ ai_gen_id }}">
+          {{ block.settings.success_message }}
+        </div>
+      {%- endif -%}
+    </div>
+  {%- endform -%}
+</product-order-form-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ProductOrderForm{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.quantityInput = this.querySelector('#quantity-{{ ai_gen_id }}');
+
+        if (this.quantityInput) {
+          this.setupQuantityValidation();
+        }
+      }
+
+      setupQuantityValidation() {
+        this.quantityInput.addEventListener('input', () => {
+          let value = parseInt(this.quantityInput.value) || 1;
+          const min = parseInt(this.quantityInput.min) || 1;
+          const max = parseInt(this.quantityInput.max) || 999;
+
+          if (value < min) {
+            this.quantityInput.value = min;
+          } else if (value > max) {
+            this.quantityInput.value = max;
+          }
+        });
+      }
+    }
+
+    customElements.define('product-order-form-{{ ai_gen_id }}', ProductOrderForm{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Product order form",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Submit order"
+    },
+    {
+      "type": "richtext",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "<p>Thank you! We've received your order and will contact you shortly.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Form fields"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_field",
+      "label": "Show product field",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "product_label",
+      "label": "Product label",
+      "default": "Product name"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "name_label",
+      "label": "Name label",
+      "default": "Your name"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "email_label",
+      "label": "Email label",
+      "default": "Email address"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone_field",
+      "label": "Show phone field",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "phone_label",
+      "label": "Phone label",
+      "default": "Phone number"
+    },
+    {
+      "type": "checkbox",
+      "id": "phone_required",
+      "label": "Phone required",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quantity_field",
+      "label": "Show quantity field",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "quantity_label",
+      "label": "Quantity label",
+      "default": "Quantity"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_message_field",
+      "label": "Show message field",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_label",
+      "label": "Message label",
+      "default": "Additional notes"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "message_placeholder",
+      "label": "Message placeholder",
+      "default": "Any special requests or questions?"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "form_padding",
+      "label": "Form padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Form border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text",
+      "default": "#261F29"
+    },
+    {
+      "type": "color",
+      "id": "input_background_color",
+      "label": "Input background",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Button background",
+      "default": "#261F29"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "button_hover_color",
+      "label": "Button hover background",
+      "default": "#4A3E65"
+    },
+    {
+      "type": "color",
+      "id": "success_color",
+      "label": "Success text",
+      "default": "#008060"
+    },
+    {
+      "type": "color",
+      "id": "success_bg_color",
+      "label": "Success background",
+      "default": "#E8F5E9"
+    },
+    {
+      "type": "color",
+      "id": "error_color",
+      "label": "Error",
+      "default": "#D82C0D"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product order form"
+    }
+  ]
+}
+{% endschema %}

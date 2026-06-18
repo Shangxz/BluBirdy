@@ -1,0 +1,212 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+-%}
+
+<div
+  class="bb bb-hero{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  data-font="{{ section.settings.headline_font }}"
+  style="--blue-h:{{ hue }};"
+>
+  <section class="bb-hero-sec" data-layout="{{ section.settings.layout }}">
+    <div class="bb-hero-bg" aria-hidden="true">
+      <div class="glow a"></div>
+      <div class="glow b"></div>
+      <div class="grid-lines"></div>
+      <div class="speed"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div class="bb-wrap bb-hero-in">
+      <div class="bb-hero-copy">
+        {%- if section.settings.eyebrow != blank -%}
+          <span class="eyebrow bb-hero-ey" data-reveal data-d="1">{{ section.settings.eyebrow }}</span>
+        {%- endif -%}
+        <h1 class="display" data-reveal data-d="2">{{ section.settings.heading }}</h1>
+        {%- if section.settings.subtext != blank -%}
+          <p class="bb-hero-sub" data-reveal data-d="3">{{ section.settings.subtext }}</p>
+        {%- endif -%}
+        <div class="bb-hero-cta" data-reveal data-d="4">
+          {%- if section.settings.button_label != blank -%}
+            <a class="btn btn-primary" href="{{ section.settings.button_link | default: '#' }}">
+              {{ section.settings.button_label }} <span class="arw">&rarr;</span>
+            </a>
+          {%- endif -%}
+          {%- if section.settings.button_label_2 != blank -%}
+            <a class="btn btn-ghost" href="{{ section.settings.button_link_2 | default: '#' }}">
+              {{ section.settings.button_label_2 }}
+            </a>
+          {%- endif -%}
+          {%- if section.settings.link_label != blank -%}
+            <a class="bb-hero-bulk" href="{{ section.settings.link_url | default: '#' }}">
+              {{ section.settings.link_label }} &rarr;
+            </a>
+          {%- endif -%}
+        </div>
+        <div class="bb-hero-meta" data-reveal data-d="5">
+          {%- for i in (1..3) -%}
+            {%- assign n = 'stat_' | append: i | append: '_number' -%}
+            {%- assign l = 'stat_' | append: i | append: '_label' -%}
+            {%- assign nv = section.settings[n] -%}
+            {%- assign lv = section.settings[l] -%}
+            {%- if nv != blank -%}
+              <div><div class="hm-n">{{ nv }}</div><div class="hm-l">{{ lv }}</div></div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      <div class="bb-hero-vis" data-parallax>
+        <div class="ring"></div>
+        {%- if section.settings.image != blank -%}
+          {{
+            section.settings.image
+            | image_url: width: 1120
+            | image_tag: class: 'bb-hero-img', widths: '440, 560, 760, 1120', sizes: '46vw', alt: section.settings.image.alt | default: section.settings.heading
+          }}
+        {%- else -%}
+          <div class="bb-hero-img">{{ 'image' | placeholder_svg_tag: 'placeholder' }}</div>
+        {%- endif -%}
+        {%- if section.settings.chip_1_value != blank -%}
+          <div class="chip c1"><span class="dot"></span><div><div class="cn">{{ section.settings.chip_1_value }}</div><div class="cl">{{ section.settings.chip_1_label }}</div></div></div>
+        {%- endif -%}
+        {%- if section.settings.chip_2_value != blank -%}
+          <div class="chip c2"><div><div class="cn">{{ section.settings.chip_2_value }}</div><div class="cl">{{ section.settings.chip_2_label }}</div></div></div>
+        {%- endif -%}
+        {%- if section.settings.chip_3_value != blank -%}
+          <div class="chip c3"><div><div class="cn">{{ section.settings.chip_3_value }}</div><div class="cl">{{ section.settings.chip_3_label }}</div></div></div>
+        {%- endif -%}
+      </div>
+    </div>
+    {%- if section.settings.show_scroll_cue -%}
+      <div class="bb-scrollcue" aria-hidden="true"><span>Scroll</span><span class="ln"></span></div>
+    {%- endif -%}
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-hero { background: var(--navy); }
+  .bb-hero-sec {
+    position: relative;
+    background: var(--navy);
+    color: var(--text-inv);
+    overflow: hidden;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    padding: 120px 0 70px;
+  }
+  .bb-hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .bb-hero .glow { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.55; }
+  .bb-hero .glow.a { width: 760px; height: 760px; right: -160px; top: -180px; background: radial-gradient(circle, var(--blue) 0%, transparent 68%); }
+  .bb-hero .glow.b { width: 560px; height: 560px; left: -180px; bottom: -200px; background: radial-gradient(circle, var(--blue-deep) 0%, transparent 70%); opacity: 0.5; }
+  .bb-hero .grid-lines {
+    position: absolute; inset: 0;
+    background-image: linear-gradient(var(--line-inv) 1px, transparent 1px), linear-gradient(90deg, var(--line-inv) 1px, transparent 1px);
+    background-size: 64px 64px;
+    -webkit-mask-image: radial-gradient(circle at 60% 40%, #000, transparent 75%);
+    mask-image: radial-gradient(circle at 60% 40%, #000, transparent 75%);
+    opacity: 0.5;
+  }
+  .bb-hero .speed { position: absolute; inset: 0; overflow: hidden; }
+  .bb-hero .speed i { position: absolute; height: 2px; width: 42%; left: -45%; background: linear-gradient(90deg, transparent, var(--blue-soft), transparent); opacity: 0; border-radius: 2px; }
+  @keyframes bb-streak { 0% { left: -45%; opacity: 0; } 8% { opacity: 0.7; } 55% { opacity: 0.7; } 100% { left: 115%; opacity: 0; } }
+  .bb-hero .speed i:nth-child(1) { top: 24%; animation: bb-streak 3.4s 0s linear infinite; }
+  .bb-hero .speed i:nth-child(2) { top: 46%; width: 30%; animation: bb-streak 2.8s 1.1s linear infinite; }
+  .bb-hero .speed i:nth-child(3) { top: 67%; width: 50%; animation: bb-streak 4.1s 2s linear infinite; }
+  .bb-hero .speed i:nth-child(4) { top: 82%; width: 24%; animation: bb-streak 3s 0.6s linear infinite; }
+
+  .bb-hero-in { position: relative; z-index: 2; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 30px; align-items: center; width: 100%; }
+  .bb-hero-sec[data-layout='center'] .bb-hero-in { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  .bb-hero-sec[data-layout='center'] .bb-hero-copy { max-width: 900px; }
+  .bb-hero-sec[data-layout='center'] .bb-hero-vis { display: none; }
+
+  .bb-hero-ey { color: var(--blue-soft); }
+  .bb-hero h1 { font-size: clamp(54px, 8.6vw, 138px); margin: 22px 0 0; }
+  .bb-hero-sub { margin-top: 24px; max-width: 486px; font-size: 18px; line-height: 1.6; color: var(--dim-inv); }
+  .bb-hero-sec[data-layout='center'] .bb-hero-sub { margin-left: auto; margin-right: auto; }
+  .bb-hero-cta { display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap; align-items: center; }
+  .bb-hero-sec[data-layout='center'] .bb-hero-cta { justify-content: center; }
+  .bb-hero-bulk { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--blue-soft); letter-spacing: 0.02em; }
+  .bb-hero-bulk:hover { color: var(--text-inv); }
+  .bb-hero-meta { display: flex; gap: 30px; margin-top: 46px; flex-wrap: wrap; }
+  .bb-hero-sec[data-layout='center'] .bb-hero-meta { justify-content: center; }
+  .bb-hero .hm-n { font-family: var(--font-display); font-weight: 800; font-size: 30px; color: var(--text-inv); line-height: 1; }
+  .bb-hero .hm-l { font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim-inv); margin-top: 8px; }
+
+  .bb-hero-vis { position: relative; justify-self: center; }
+  .bb-hero-vis .ring { position: absolute; inset: -6% -2%; border-radius: 50%; background: radial-gradient(circle, var(--blue) 0%, transparent 62%); filter: blur(14px); opacity: 0.55; transform: translateY(var(--py, 0)); }
+  .bb-hero-img { position: relative; display: block; width: min(46vw, 560px); height: auto; aspect-ratio: 1/1; object-fit: cover; border-radius: 6px; box-shadow: 0 50px 110px -40px #000, 0 0 0 1px var(--line-inv); transform: translateY(var(--py, 0)); }
+  .bb-hero-img[data-reveal] { transition: opacity 1s cubic-bezier(0.16, 0.84, 0.3, 1), transform 1s cubic-bezier(0.16, 0.84, 0.3, 1); }
+
+  .bb-hero .chip { position: absolute; background: rgba(12, 20, 48, 0.72); backdrop-filter: blur(10px); border: 1px solid var(--line-inv); border-radius: 4px; padding: 11px 15px; display: flex; align-items: center; gap: 10px; box-shadow: 0 18px 40px -20px #000; }
+  .bb-hero .chip .cn { font-family: var(--font-display); font-weight: 800; font-size: 19px; color: var(--text-inv); line-height: 1; }
+  .bb-hero .chip .cl { font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--dim-inv); }
+  .bb-hero .chip .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 22%, transparent); }
+  @keyframes bb-bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-9px); } }
+  .bb-hero .chip.c1 { top: 8%; left: -46px; animation: bb-bob 4.6s ease-in-out infinite; }
+  .bb-hero .chip.c2 { bottom: 16%; right: -40px; animation: bb-bob 5.4s ease-in-out 0.8s infinite; }
+  .bb-hero .chip.c3 { bottom: -18px; left: 14%; animation: bb-bob 5s ease-in-out 1.6s infinite; }
+
+  .bb-scrollcue { position: absolute; bottom: 26px; left: 50%; transform: translateX(-50%); z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--dim-inv); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; }
+  .bb-scrollcue .ln { width: 1px; height: 34px; background: linear-gradient(var(--accent), transparent); animation: bb-drop 1.8s ease-in-out infinite; }
+  @keyframes bb-drop { 0% { transform: scaleY(0.2); transform-origin: top; opacity: 0.4; } 50% { transform: scaleY(1); opacity: 1; } 100% { transform: scaleY(0.2); transform-origin: bottom; opacity: 0.4; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bb-hero .chip, .bb-hero .speed i, .bb-scrollcue .ln { animation: none !important; }
+  }
+  @media (max-width: 880px) {
+    .bb-hero-in { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+    .bb-hero-vis { margin-top: 54px; }
+    .bb-hero-sub, .bb-hero-cta, .bb-hero-meta { margin-left: auto; margin-right: auto; }
+    .bb-hero-cta, .bb-hero-meta { justify-content: center; }
+    .bb-hero .chip.c1 { left: -12px; }
+    .bb-hero .chip.c2 { right: -8px; }
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Hero",
+  "tag": "section",
+  "class": "bb-section",
+  "settings": [
+    { "type": "header", "content": "Content" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Tournament-grade feather shuttlecocks" },
+    { "type": "inline_richtext", "id": "heading", "label": "Heading", "default": "Elevate Your Game" },
+    { "type": "textarea", "id": "subtext", "label": "Subtext", "default": "Precision-balanced goose-feather shuttles built for speed, stability and the long rallies that decide matches." },
+    { "type": "image_picker", "id": "image", "label": "Hero image" },
+    { "type": "checkbox", "id": "show_scroll_cue", "label": "Show scroll cue", "default": true },
+    { "type": "header", "content": "Buttons" },
+    { "type": "text", "id": "button_label", "label": "Primary button", "default": "Shop Shuttlecocks" },
+    { "type": "url", "id": "button_link", "label": "Primary link" },
+    { "type": "text", "id": "button_label_2", "label": "Secondary button", "default": "Explore the grades" },
+    { "type": "url", "id": "button_link_2", "label": "Secondary link" },
+    { "type": "text", "id": "link_label", "label": "Text link", "default": "Buying for a club? Bulk pricing" },
+    { "type": "url", "id": "link_url", "label": "Text link URL" },
+    { "type": "header", "content": "Stats" },
+    { "type": "text", "id": "stat_1_number", "label": "Stat 1 value", "default": "77–79" },
+    { "type": "text", "id": "stat_1_label", "label": "Stat 1 label", "default": "Aeroplane speed" },
+    { "type": "text", "id": "stat_2_number", "label": "Stat 2 value", "default": "16" },
+    { "type": "text", "id": "stat_2_label", "label": "Stat 2 label", "default": "Goose feathers" },
+    { "type": "text", "id": "stat_3_number", "label": "Stat 3 value", "default": "200+" },
+    { "type": "text", "id": "stat_3_label", "label": "Stat 3 label", "default": "Clubs supplied" },
+    { "type": "header", "content": "Floating chips" },
+    { "type": "text", "id": "chip_1_value", "label": "Chip 1 value", "default": "Speed 79" },
+    { "type": "text", "id": "chip_1_label", "label": "Chip 1 label", "default": "Fast" },
+    { "type": "text", "id": "chip_2_value", "label": "Chip 2 value", "default": "Excellent" },
+    { "type": "text", "id": "chip_2_label", "label": "Chip 2 label", "default": "Feather grade" },
+    { "type": "text", "id": "chip_3_value", "label": "Chip 3 value", "default": "EG1130 · LE" },
+    { "type": "text", "id": "chip_3_label", "label": "Chip 3 label", "default": "Limited edition" },
+    { "type": "header", "content": "Style" },
+    { "type": "select", "id": "layout", "label": "Layout", "options": [{ "value": "split", "label": "Split" }, { "value": "center", "label": "Centered" }], "default": "split" },
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "select", "id": "headline_font", "label": "Headline font", "options": [{ "value": "Expanded", "label": "Archivo Expanded" }, { "value": "Anton", "label": "Anton" }, { "value": "Oswald", "label": "Oswald" }], "default": "Expanded" },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true, "info": "Off = use blue as the accent." }
+  ],
+  "presets": [{ "name": "BB Hero" }]
+}
+{% endschema %}

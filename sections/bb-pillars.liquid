@@ -1,0 +1,79 @@
+{%- liquid
+  assign hues = 'Electric:248,Azure:236,Indigo:288' | split: ','
+  assign hue = 248
+  for pair in hues
+    assign kv = pair | split: ':'
+    if kv[0] == section.settings.accent_color
+      assign hue = kv[1]
+    endif
+  endfor
+  assign icons = 'pulse:M3 12h6l2-7 4 14 2-7h4,flight:M12 3v18M5 10l7-7 7 7,truck:M3 7h11v8H3zM14 10h4l3 3v2h-7M6.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM17.5 18a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z,check:M20 6 9 17l-5-5,shield:M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z' | split: ','
+-%}
+
+<div
+  class="bb bb-pillars{% unless section.settings.use_volt %} no-volt{% endunless %}"
+  style="--blue-h:{{ hue }};"
+>
+  <section class="pill">
+    <div class="bb-wrap pill-grid">
+      {%- for block in section.blocks -%}
+        {%- assign path = '' -%}
+        {%- for ic in icons -%}
+          {%- assign ikv = ic | split: ':' -%}
+          {%- if ikv[0] == block.settings.icon -%}{%- assign path = ikv[1] -%}{%- endif -%}
+        {%- endfor -%}
+        <div class="pill-c" data-reveal data-d="{{ forloop.index }}" {{ block.shopify_attributes }}>
+          <div class="pill-ic">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="{{ path }}"/></svg>
+          </div>
+          <div><h3>{{ block.settings.title }}</h3><p>{{ block.settings.text }}</p></div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .bb-pillars .pill { background: var(--navy); color: var(--text-inv); padding: 80px 0; position: relative; overflow: hidden; }
+  .bb-pillars .pill::before { content: ''; position: absolute; left: -120px; top: 50%; width: 480px; height: 480px; border-radius: 50%; background: radial-gradient(circle, var(--blue-deep), transparent 70%); opacity: 0.4; transform: translateY(-50%); }
+  .bb-pillars .pill-grid { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  @media (max-width: 820px) { .bb-pillars .pill-grid { grid-template-columns: 1fr; } }
+  .bb-pillars .pill-c { display: flex; gap: 18px; align-items: flex-start; padding: 8px; }
+  .bb-pillars .pill-ic { flex: none; width: 54px; height: 54px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in srgb, var(--blue) 18%, transparent); border: 1px solid var(--line-inv); color: var(--blue-soft); }
+  .bb-pillars .pill-c h3 { font-size: 19px; margin-bottom: 6px; }
+  .bb-pillars .pill-c p { color: var(--dim-inv); font-size: 15px; line-height: 1.55; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "BB Trust pillars",
+  "tag": "section",
+  "class": "bb-section",
+  "max_blocks": 4,
+  "settings": [
+    { "type": "select", "id": "accent_color", "label": "Accent color", "options": [{ "value": "Electric", "label": "Electric" }, { "value": "Azure", "label": "Azure" }, { "value": "Indigo", "label": "Indigo" }], "default": "Electric" },
+    { "type": "checkbox", "id": "use_volt", "label": "Volt accent", "default": true }
+  ],
+  "blocks": [
+    {
+      "type": "pillar",
+      "name": "Pillar",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "options": [{ "value": "pulse", "label": "Pulse" }, { "value": "flight", "label": "Flight" }, { "value": "truck", "label": "Truck" }, { "value": "check", "label": "Check" }, { "value": "shield", "label": "Shield" }], "default": "pulse" },
+        { "type": "text", "id": "title", "label": "Title", "default": "Speed-tested batches" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Every tube graded to a speed band before dispatch." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "BB Trust pillars",
+      "blocks": [
+        { "type": "pillar", "settings": { "icon": "pulse", "title": "Speed-tested batches", "text": "Every tube graded to a speed band before dispatch." } },
+        { "type": "pillar", "settings": { "icon": "flight", "title": "Stable, true flight", "text": "Symmetric goose feathers for a predictable parabola." } },
+        { "type": "pillar", "settings": { "icon": "truck", "title": "Dispatched in 48 hrs", "text": "Stocked and shipped fast from our own warehouse." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

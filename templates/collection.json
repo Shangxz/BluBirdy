@@ -1,0 +1,24 @@
+{
+  "sections": {
+    "bb_collection": {
+      "type": "bb-collection",
+      "settings": {
+        "subtitle": "speed-tested & graded",
+        "show_description": false,
+        "products_per_page": 16,
+        "show_filters": true,
+        "filters": "All, Tournament, Club, Training",
+        "enable_sorting": true,
+        "show_bulk_cta": true,
+        "bulk_heading": "Kitting out a club?",
+        "bulk_text": "Buying for a club, team, or as a reseller? Tell us what you need and we'll send a tailored quote within a day.",
+        "bulk_button": "Get bulk pricing",
+        "accent_color": "Electric",
+        "headline_font": "Expanded",
+        "dark": false,
+        "use_volt": true
+      }
+    }
+  },
+  "order": ["bb_collection"]
+}
