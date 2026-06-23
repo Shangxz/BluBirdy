@@ -13,8 +13,6 @@
     assign on_sale = true
   endif
   assign grade = product.metafields.custom.grade
-  assign feather = product.metafields.custom.feather
-  assign per_tube = product.metafields.custom.per_tube
   assign coll = product.collections.first
   assign form_id = 'bb-product-form-' | append: section.id
 -%}
@@ -143,18 +141,6 @@
             {%- endform -%}
           </product-form>
 
-          {%- comment -%} specs {%- endcomment -%}
-          <div class="pr-specs">
-            <h4>Specifications</h4>
-            <dl>
-              {%- if product.vendor != blank -%}<div class="sp"><dt>Brand</dt><dd>{{ product.vendor }}</dd></div>{%- endif -%}
-              {%- if product.type != blank -%}<div class="sp"><dt>Type</dt><dd>{{ product.type }}</dd></div>{%- endif -%}
-              {%- if grade != blank -%}<div class="sp"><dt>Grade</dt><dd>{{ grade }}</dd></div>{%- endif -%}
-              {%- if feather != blank -%}<div class="sp"><dt>Feather</dt><dd>{{ feather }}</dd></div>{%- endif -%}
-              {%- if per_tube != blank -%}<div class="sp"><dt>Per tube</dt><dd>{{ per_tube }}</dd></div>{%- endif -%}
-              <div class="sp"><dt>Availability</dt><dd>{% if product.available %}In stock{% else %}Sold out{% endif %}</dd></div>
-            </dl>
-          </div>
         </div>
       </div>
 
@@ -276,14 +262,6 @@
   .bb-product .pr-add[disabled] { opacity: 0.5; cursor: not-allowed; }
   .bb-product .pr-add .loading__spinner { display: none; }
   .bb-product .pr-add.loading .loading__spinner:not(.hidden) { display: inline-flex; }
-
-  .bb-product .pr-specs { margin-top: 30px; border-top: 1px solid var(--section-line); padding-top: 24px; }
-  .bb-product .pr-specs h4 { font-size: 13px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--section-dim); margin-bottom: 14px; }
-  .bb-product .pr-specs dl { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin: 0; }
-  @media (max-width: 600px) { .bb-product .pr-specs dl { grid-template-columns: 1fr; } }
-  .bb-product .pr-specs .sp { display: flex; justify-content: space-between; gap: 12px; padding: 11px 0; border-bottom: 1px solid var(--section-line); font-size: 14.5px; }
-  .bb-product .pr-specs .sp dt { color: var(--section-dim); }
-  .bb-product .pr-specs .sp dd { margin: 0; font-weight: 600; text-align: right; }
 
   .bb-product .pr-related { margin-top: 96px; }
   .bb-product .pr-related h2 { font-size: clamp(28px, 3.4vw, 46px); margin-bottom: 30px; }
