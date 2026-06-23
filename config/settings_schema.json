@@ -8,6 +8,29 @@
     "theme_support_url": "https://support.shopify.com/"
   },
   {
+    "name": "SEO",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Fallback search-engine title/description for the homepage, used when none is set in Online Store → Preferences. Per-product and per-collection SEO is still set in their own admin pages."
+      },
+      {
+        "type": "text",
+        "id": "seo_home_title",
+        "label": "Homepage SEO title",
+        "default": "Badminton Shuttlecocks & Aeroplane Feather Shuttles",
+        "info": "Aim for ~60 characters. Your store name is appended automatically."
+      },
+      {
+        "type": "textarea",
+        "id": "seo_home_description",
+        "label": "Homepage meta description",
+        "default": "Shop tournament-grade badminton shuttlecocks: goose-feather Aeroplane shuttles and birdies, speed-tested and graded for club, training and match play. Bulk pricing and fast dispatch.",
+        "info": "Aim for ~150-160 characters. Used as the default meta description sitewide when a page has none."
+      }
+    ]
+  },
+  {
     "name": "t:settings_schema.logo.name",
     "settings": [
       {

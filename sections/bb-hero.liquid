@@ -65,7 +65,7 @@
           {{
             section.settings.image
             | image_url: width: 1120
-            | image_tag: class: 'bb-hero-img', widths: '440, 560, 760, 1120', sizes: '46vw', alt: section.settings.image.alt | default: section.settings.heading
+            | image_tag: class: 'bb-hero-img', widths: '440, 560, 760, 1120', sizes: '46vw', alt: section.settings.image.alt | default: 'Tournament-grade goose-feather badminton shuttlecock'
           }}
         {%- else -%}
           <div class="bb-hero-img">{{ 'image' | placeholder_svg_tag: 'placeholder' }}</div>

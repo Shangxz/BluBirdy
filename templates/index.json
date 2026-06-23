@@ -5,7 +5,7 @@
       "settings": {
         "eyebrow": "Tournament-grade feather shuttlecocks",
         "heading": "Elevate Your Game",
-        "subtext": "Precision-balanced goose-feather shuttles built for speed, stability and the long rallies that decide matches. Trusted on club courts everywhere.",
+        "subtext": "Precision-balanced goose-feather badminton shuttlecocks — Aeroplane feather shuttles and birdies built for speed, stability and the long rallies that decide matches. Trusted on club courts everywhere.",
         "image": "shopify://shop_images/2023324143958.jpg",
         "show_scroll_cue": true,
         "button_label": "Shop Shuttlecocks",
@@ -34,7 +34,7 @@
     "bb_marquee": {
       "type": "bb-marquee",
       "settings": {
-        "items": "Tournament Grade, Goose Feather, 77–79 Speed, Bulk Discounts, 48hr Dispatch, Club Trusted",
+        "items": "Badminton Shuttlecocks, Tournament Grade, Goose Feather, Aeroplane Speed 77–79, Feather Birdies, Bulk Discounts, 48hr Dispatch, Club Trusted",
         "use_volt": true
       }
     },
@@ -43,9 +43,9 @@
       "settings": {
         "collection": "badminton-feather-shuttlecocks",
         "products_to_show": 4,
-        "eyebrow": "The collection",
+        "eyebrow": "Feather badminton shuttlecocks",
         "heading": "Built for the birds that fly fast",
-        "lead": "Every batch is speed-tested and graded before it ships. Filter by play level to find your match.",
+        "lead": "Every batch of feather shuttlecocks is speed-tested and graded before it ships. Filter by play level to find your Aeroplane-grade match.",
         "show_filters": true,
         "filters": "All, Tournament, Club, Training",
         "button_label": "View all shuttlecocks",

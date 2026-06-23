@@ -185,6 +185,48 @@
   </script>
 </div>
 
+{%- comment -%} SEO: Product rich-result schema (price, availability, brand) {%- endcomment -%}
+<script type="application/ld+json">
+  {{ product | structured_data }}
+</script>
+
+{%- comment -%} SEO: Breadcrumb schema mirroring the on-page breadcrumb {%- endcomment -%}
+<script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ request.origin | append: routes.root_url | json }}
+      }
+      {%- if coll -%}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ coll.title | json }},
+        "item": {{ request.origin | append: coll.url | json }}
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": {{ product.title | json }},
+        "item": {{ request.origin | append: product.url | json }}
+      }
+      {%- else -%}
+      ,{
+        "@type": "ListItem",
+        "position": 2,
+        "name": {{ product.title | json }},
+        "item": {{ request.origin | append: product.url | json }}
+      }
+      {%- endif -%}
+    ]
+  }
+</script>
+
 <script src="{{ 'product-form.js' | asset_url }}" defer="defer"></script>
 <script src="{{ 'bb-product.js' | asset_url }}" defer="defer"></script>
 
